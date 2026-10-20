@@ -159,9 +159,9 @@ The frontend is fully wired to REST API endpoints via `src/services/api.ts`:
 - `POST /api/provider/services`: Add new service
 - `DELETE /api/provider/services/:id`: Delete service
 
-> **Note**: When the backend server is offline or unreachable, the frontend automatically falls back to its built-in client AI intent and mock data engine with `localStorage` persistence, ensuring zero broken pages during demonstrations.
-#   L o c a l L i n k - A i  
- #   L o c a l L i n k - A i  
- #   L o c a l L i n k - A i -  
- #   L o c a l L i n k - A i -  
+
+
+
+the whole website is ai generated , here i was just trying to vibe code
+ 
  
