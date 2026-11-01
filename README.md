@@ -1,167 +1,262 @@
-# LocalLink AI — Frontend Web Application
+# FloodWatch AI – Intelligent Flash Flood Prediction & Early Warning System for Hilly Regions
 
-> **LocalLink AI**: "Find the right local service. Fast. Trusted. Nearby."  
-> An AI-powered hyperlocal service discovery platform matching citizens to verified nearby service providers based on natural language intent, real-time availability, distance, category, and fraud-resistant TrustScore.
+[![Smart India Hackathon 2026](https://img.shields.io/badge/SIH-2026-blue?style=for-the-badge&logo=shield)](https://sih.gov.in)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.110+-009688?style=for-the-badge&logo=fastapi)](https://fastapi.tiangolo.com)
+[![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react)](https://react.dev)
+[![Vite](https://img.shields.io/badge/Vite-8.3-646CFF?style=for-the-badge&logo=vite)](https://vitejs.dev)
+[![TailwindCSS](https://img.shields.io/badge/Tailwind-4.0-38B2AC?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com)
+[![Leaflet](https://img.shields.io/badge/Leaflet-1.9-199900?style=for-the-badge&logo=leaflet)](https://leafletjs.com)
+[![NetworkX](https://img.shields.io/badge/NetworkX-3.0+-orange?style=for-the-badge)](https://networkx.org)
+[![Pytest](https://img.shields.io/badge/Pytest-8.0+-0A9EDC?style=for-the-badge&logo=pytest)](https://pytest.org)
 
----
+**FloodWatch AI** is a real-time, AI-driven disaster management and flash flood early warning platform engineered specifically for mountainous and hilly river basins (calibrated for the Alaknanda and Mandakini River catchments in Uttarakhand). 
 
-## 🌟 Core Features & Architecture
-
-### 1. 🏠 Landing Page (`/`)
-- **Logo & Branding**: Modern AI-product styling with responsive navbar and navigation drawer.
-- **Official Tagline**: *"Find the right local service. Fast. Trusted. Nearby."*
-- **Large AI Search Box**: Natural language input with voice search simulation and sample query chips (e.g., *"I need a pharmacy open now near me"*, *"Find a reliable electrician within 5 km"*).
-- **Location Selector & GPS**: Multi-city switcher (Bengaluru, New Delhi, Mumbai, Ahmedabad, Jaipur) + **"Use Current Location"** button with HTML5 `navigator.geolocation` live coordinates.
-- **Popular Service Categories**: Home & Repair SOS, Healthcare & 24/7 Pharma, Automotive & EV Charging, Hospitality & Work Stays, Financial & Aadhaar Points, Cleaning & Sanitization.
-- **TrustScore Engine Banner**: Comprehensive breakdown explaining why TrustScore replaces spoofed 5-star ratings.
-- **Top Verified Providers**: Live recommendations with direct Call, Navigate, and Details actions.
-
-### 2. 🔍 AI Search & Discovery (`/search`)
-- **Natural Language Intent Parser**: Analyzes queries into structured intent (sector, urgency level, keywords, complexity, confidence score).
-- **Transparent AI Loading States**: Real-time progress updates (*"Parsing intent..."*, *"Geofencing within radius..."*, *"Evaluating TrustScores & SLA..."*).
-- **Interactive Multi-Filter Tray**:
-  - Distance radius slider (1 km to 20 km)
-  - Category selector
-  - Minimum TrustScore threshold (&ge;60 to &ge;95)
-  - Availability toggles (*"Open Now Only"*, *"24/7 Emergency SOS Ready"*)
-  - Sorting: AI Composite Match, Highest TrustScore, Distance, Rating, Price
-- **Triple View Toggles**:
-  - **List View**: Grid of comprehensive provider cards
-  - **Split View**: Left column cards, right column sticky interactive Leaflet map
-  - **Full Map View**: Large geospatial map canvas
-- **Service/Provider Cards**:
-  - Provider name, category label, distance (km), ETA (mins), open/closed status
-  - Verified TrustScore pill with breakdown trigger
-  - Rating, reviews count, address, phone number
-  - Direct action buttons: **"View Details"**, **"Call"**, **"Navigate"**
-  - **"Add to Compare"** checkbox and **"Save / Favorite"** heart toggle.
-
-### 3. 🗺️ Interactive Map View
-- **Interactive Leaflet Map**: Powered by OpenStreetMap & CartoDB tiles (dark mode styling).
-- **User Location Marker**: Pulsing blue beacon indicating citizen coordinates.
-- **Provider Markers**: TrustScore badges (&ge;93 in emerald, verified in blue) with open/closed pulsing status dots.
-- **Interactive Popups**: Click any pin to inspect summary, distance, and launch instant "View Details" or "Call".
-- **Dynamic Polyline**: Displays turn-by-turn route line to selected provider.
-
-### 4. 🏢 Provider Details Page (`/provider/:id`)
-- **Full Business Profile**: Name, category, description, address, contact numbers, email, website.
-- **Services Catalog**: Interactive service list with fixed pricing, estimated duration, and **"Book Now"** button.
-- **TrustScore Audit**: Detailed factor breakdown (Govt Licensing, On-Time Reliability, Customer Sentiment, Dispatch Speed).
-- **Interactive Geofenced Mini-Map**: Localized view with directions button.
-- **Weekly Operating Hours Table**: Day-by-day scheduler with real-time open status.
-- **Verified Customer Reviews**: OTP-authenticated reviews with rating stars, service tags, and **"Write a Verified Review"** form.
-- **Actions**: Instant Call dialer modal, Navigation turn-by-turn drawer, and Booking with OTP modal.
-
-### 5. ⚖️ Compare Feature (`/compare` + Floating Dock)
-- **Floating Compare Dock**: Persistent bottom tray tracking selected providers from anywhere in the app.
-- **Side-by-Side Comparison Matrix**:
-  - Compares up to 4 providers simultaneously
-  - Distance, Arrival ETA, Open status, TrustScore, Rating, Review counts, Pricing, Services offered, and Regulatory audit sources
-  - Highlights winners (*"Best Trust"*, *"Closest"*, *"Top Rated"*).
-
-### 6. 🔐 User Authentication & Citizen Profile (`/profile`)
-- **OTP-Based Authentication**:
-  - Phone number input
-  - Request OTP (`POST /api/auth/otp/send`)
-  - Enter 6-digit code with demo helper (`123456` or auto-generated code)
-  - Verify OTP (`POST /api/auth/otp/verify`)
-- **Citizen Profile**:
-  - Name, Phone, Email editing
-  - **Saved Providers**: Collection of bookmarked merchants
-  - **Search History**: Timestamped queries with 1-click re-search and "Clear History"
-  - **Recent Bookings**: Service bookings with confirmation OTP codes and status tracking.
-
-### 7. 🏪 Provider Dashboard (`/provider-dashboard`)
-- **Business Profile**: Update business details, address, and descriptions.
-- **Services Management**: Full CRUD to add new services, set prices, durations, or delete services.
-- **Location & Radius**: PostGIS coordinates and dispatch radius slider (2 km – 20 km).
-- **Live Availability Toggle**: Switch between **Online (Accepting Orders)** and **Offline / Paused**.
-- **24/7 Emergency SOS Toggle**: Activate emergency on-call status.
-- **Opening Hours Scheduler**: Customize daily operating hours for all 7 days.
-- **Verification Status**: Displays active trade licenses, GSTIN, and regulatory inspection certificates.
-- **TrustScore Analytics**: Actionable tips and response speed benchmarks to boost ranking.
-- **Live Dispatch Queue**: Incoming citizen requests with OTP verification upon completion.
+The platform integrates:
+1. **Multi-station environmental sensor telemetry** (rainfall intensity, raw river stage, and soil moisture).
+2. **1D Discrete Kalman Filter state-space sensor fusion** suppressing white-water turbulence and acoustic bounce.
+3. **Kinematic wave rainfall-runoff prediction engine** computing 30-minute forward stage trajectories with basin concentration lag ($\tau \approx 22\text{ mins}$).
+4. **1,000-scenario Monte Carlo stochastic simulation** generating empirical breach probabilities against the 3.50m critical danger threshold and 95% confidence intervals.
+5. **Stateful hysteresis risk classification** (`LOW`, `MODERATE`, `HIGH`, `CRITICAL`) with anti-chatter deadband buffers ($0.20\text{m} / 5\%$).
+6. **NetworkX Dijkstra evacuation routing** that dynamically penalizes and blocks flooded gorge roads, safely directing evacuees uphill via mountain passes to designated high-ground shelters.
+7. **Automated multi-channel emergency alert distribution** (Web Audio API siren synthesizer, in-app notification drawer, WebSockets, and SMTP email dispatcher).
 
 ---
 
-## 🛠️ Tech Stack
+## 🏗️ System Architecture
 
-- **Framework**: React 19 + TypeScript
-- **Styling**: Tailwind CSS v4 + Lucide React Icons
-- **Routing**: React Router DOM (v7)
-- **HTTP Client**: Axios with configured `baseURL` and Bearer token interceptor
-- **Interactive Maps**: Leaflet + OpenStreetMap / CartoDB tiles
-- **Build Tool**: Vite 8 (builds in ~2 seconds)
-- **Local Persistence**: Full transparent mock engine fallback with `localStorage` and `sessionStorage`
+```mermaid
+flowchart TD
+    subgraph SENSORS["1. Catchment Environmental Monitoring"]
+        S1["Sensor 1: Alaknanda Upstream Radar Gauge (840m)"]
+        S2["Sensor 2: Mandakini Gorge Velocity Radar (810m)"]
+        S3["Sensor 3: Chamoli Ridge Rain Station (1250m)"]
+        S4["Sensor 4: Rudraprayag Sangam Confluence (760m)"]
+        S5["Sensor 5: Lowland Floodplain Soil Array (800m)"]
+    end
 
----
+    subgraph BACKEND["2. FastAPI Hydrology & AI Prediction Engine (Port 8000)"]
+        KF["1D Discrete Kalman Filter\nState: x = [h, v]^T | P, Q, R Covariance | Coasting on Packet Drop"]
+        KW["Kinematic Wave Runoff Engine\n30-Min Forward Stage Rise | Tau = 22 mins Lag"]
+        MC["Monte Carlo Stochastic Ensemble (1,000 runs)\nPrecipitation Perturbation | Dynamic Soil Saturation | 95% CI"]
+        RC["Stateful Hysteresis Risk Classifier\nLOW, MODERATE, HIGH, CRITICAL | 0.20m / 5% Deadband"]
+        NX["NetworkX Dijkstra Evacuation Router\nInundated Road Avoidance (Cost = 10^6) | Ridge Pass Selection"]
+        ALERT["Emergency Alert & SMTP Gateway\n45s Deduplication Throttle | Email Dispatcher"]
+        DB[("SQLAlchemy Engine: SQLite (floodwatch.db) / PostgreSQL")]
+    end
 
-## ⚙️ Environment Variables
+    subgraph FRONTEND["3. React 19 + Vite Emergency Management Center (Port 5173)"]
+        NAV["Global Command Navbar & Scenario Controls"]
+        KPI["6 Real-Time Telemetry KPI Cards"]
+        MAP["Live Leaflet Geospatial Disaster Map"]
+        PRED["Hydrograph Prediction & 95% CI Forecast"]
+        EVAC["Dijkstra Evacuation Guidance & Elevation Profile"]
+        ALERTS["Automated Alerts Feed & Multi-Channel Simulator"]
+        STUDIO["Simulation Studio & Basin Configurator"]
+        AUDIO["Web Audio API Emergency Siren (800Hz / 1200Hz)"]
+    end
 
-Create a `.env` file in the project root (see `.env.example`):
+    S1 & S2 & S3 & S4 & S5 -->|Raw 2s Telemetry Stream| KF
+    KF -->|Filtered Stage h & Velocity v| KW
+    KW -->|Stage Rise Hydrograph| MC
+    MC -->|Breach Probability & Percentiles| RC
+    RC -->|Current Threat Level| NX
+    RC -->|Trigger on CRITICAL / HIGH| ALERT
+    KF & KW & MC & RC & NX & ALERT <--> DB
 
-```env
-# Backend REST API URL
-VITE_API_URL=http://localhost:5000/api
-
-# Map provider: 'osm' (OpenStreetMap - free, no API key needed), 'mapbox', or 'google'
-VITE_MAP_PROVIDER=osm
-
-# Optional: Mapbox access token if using Mapbox vector tiles
-VITE_MAPBOX_TOKEN=
-
-# Optional: Google Maps API key if using Google Maps JS API
-VITE_GOOGLE_MAPS_API_KEY=
+    BACKEND -->|REST API & WebSockets| FRONTEND
 ```
 
 ---
 
-## 🏃 Running the Application
+## 📁 Repository Structure
 
-### 1. Install Dependencies
+```
+floodwatch-ai/
+├── src/                                # Frontend React 19 Application
+│   ├── components/
+│   │   ├── Navbar.jsx                  # Brand logo, route links, scenario buttons & siren mute
+│   │   ├── KpiCards.jsx                # 6 key metrics (Rainfall, Water Level, Soil, Probability, Risk, Lead Time)
+│   │   ├── FloodMap.jsx                # Embedded Leaflet disaster map
+│   │   ├── PredictionChart.jsx         # 30-min composed hydrograph with 95% confidence bounds
+│   │   ├── RiskPanel.jsx               # Risk level diagnostics & action protocols
+│   │   ├── SensorGraphs.jsx            # Live multi-sensor trend lines & raw vs filtered comparison
+│   │   ├── EvacuationPanel.jsx         # Turn-by-turn evacuation summary & transit time
+│   │   ├── AlertBanner.jsx             # Top flashing warning ribbon
+│   │   ├── AlertHistory.jsx            # Emergency alert activity log
+│   │   └── EmergencyAlertModal.jsx     # Auto-popup modal on HIGH/CRITICAL flood risk
+│   ├── pages/
+│   │   ├── LandingPage.jsx             # Public landing page with hero, telemetry preview, pipeline & helplines
+│   │   ├── DashboardPage.jsx           # Integrated emergency command center
+│   │   ├── LiveMapPage.jsx             # Fullscreen disaster map with layers, nodes drawer & convoy simulator
+│   │   ├── PredictionPage.jsx          # AI prediction intelligence, hydrograph, multi-sensor charts & math
+│   │   ├── EvacuationPage.jsx          # Dijkstra route, elevation profile, shelters directory & offline print card
+│   │   ├── AlertsPage.jsx              # Automated alert feed, broadcast simulator & siren player
+│   │   ├── SettingsPage.jsx            # Simulation Studio, polling frequency, basin select & IoT diagnostics
+│   │   └── LoginPage.jsx               # Operator & Commander authentication
+│   ├── context/
+│   │   └── SensorContext.jsx           # Global state, 2s polling synchronization, alerts & scenarios
+│   ├── services/
+│   │   ├── api.js                      # Axios client with fallback models
+│   │   └── audioService.js             # Web Audio API emergency siren synthesizer
+│   ├── utils/
+│   │   └── formatters.js               # Formatting utilities for telemetry & badges
+│   ├── App.jsx                         # React Router v6 route configuration
+│   ├── main.tsx                        # React application bootstrap
+│   └── index.css                       # Tailwind CSS 4 styles
+│
+├── backend/                            # Backend Python FastAPI Engine
+│   ├── app/
+│   │   ├── main.py                     # FastAPI application entrypoint, CORS & WebSocket endpoints
+│   │   ├── config.py                   # Pydantic v2 application configuration & thresholds
+│   │   ├── database.py                 # SQLAlchemy engine, session maker & declarative Base
+│   │   ├── models/__init__.py          # SQLAlchemy ORM models (Sensor, Reading, Prediction, Risk, Shelter, etc.)
+│   │   ├── schemas/__init__.py         # Pydantic validation schemas for requests & responses
+│   │   ├── services/
+│   │   │   ├── kalman_filter.py        # 1D Discrete Kalman Filter state-space sensor fusion
+│   │   │   ├── flood_prediction.py     # Kinematic wave 30-min runoff prediction engine
+│   │   │   ├── monte_carlo.py          # 1,000-scenario Monte Carlo stochastic simulator
+│   │   │   ├── risk_classifier.py      # Stateful hysteresis risk classification engine
+│   │   │   ├── evacuation_router.py    # NetworkX Dijkstra topological road graph router
+│   │   │   ├── alert_service.py        # Automated emergency alert generator & SMTP dispatcher
+│   │   │   └── sensor_simulator.py     # Multi-station physics simulator (normal, warning, extreme)
+│   │   ├── websocket/
+│   │   │   └── manager.py              # WebSocket connection manager & topic publisher
+│   │   └── routes/
+│   │       ├── sensors.py              # Sensor telemetry, history & simulation endpoints
+│   │       ├── predictions.py          # 30-minute flood forecasting & ad-hoc runs
+│   │       ├── risk.py                 # Real-time risk assessments & hysteresis status
+│   │       ├── evacuation.py           # Dijkstra evacuation route & shelter directory
+│   │       ├── alerts.py               # Emergency alert feed & operator acknowledgment
+│   │       ├── analytics.py            # Aggregate telemetry analytics & statistics
+│   │       ├── map.py                  # Map GIS features (sensors, risk polygons, shelters)
+│   │       ├── simulation.py           # Scenario switcher (normal, warning, extreme) & reset
+│   │       └── auth.py                 # Operator JWT login & identity profile
+│   ├── tests/
+│   │   ├── test_kalman.py              # Kalman filter noise reduction & missing packet tests
+│   │   ├── test_prediction.py          # Kinematic wave prediction & lag time tests
+│   │   ├── test_monte_carlo.py         # Monte Carlo breach probability & confidence envelope tests
+│   │   ├── test_evacuation.py          # Dijkstra evacuation router & flood road detour tests
+│   │   └── test_routes.py              # Full REST API endpoint integration tests
+│   ├── requirements.txt                # Python backend dependencies
+│   ├── .env.example                    # Backend environment configuration template
+│   └── pytest.ini                      # Pytest package root discovery configuration
+│
+├── package.json                        # Frontend dependencies & scripts
+├── vite.config.js                      # Vite bundler configuration
+└── README.md                           # Main project documentation
+```
+
+---
+
+## ⚡ Quick Start & Execution
+
+### 1. Prerequisites
+- **Node.js**: v18.0.0 or higher
+- **Python**: v3.11 or higher
+- **Git**
+
+### 2. Backend Setup
 ```bash
+# Navigate to the backend directory
+cd backend
+
+# Create virtual environment (optional)
+python -m venv venv
+# Windows:
+.\venv\Scripts\activate
+# Linux/macOS:
+source venv/bin/activate
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Run Pytest verification (18 tests verifying algorithms and routes)
+python -m pytest tests/ -v
+
+# Start the FastAPI server
+python -m uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload
+```
+
+- Backend API: `http://127.0.0.1:8000`
+- Interactive Swagger UI: `http://127.0.0.1:8000/docs`
+- ReDoc Documentation: `http://127.0.0.1:8000/redoc`
+
+### 3. Frontend Setup
+```bash
+# In another terminal, navigate to the project root:
+cd ..
+
+# Install frontend dependencies
 npm install
-```
 
-### 2. Run in Development Mode
-```bash
+# Start Vite development server
 npm run dev
 ```
-Open `http://localhost:5173` in your browser.
 
-### 3. Build for Production
-```bash
-npm run build
-```
-Verify the production build with:
-```bash
-npm run preview
-```
+- Frontend Application: `http://localhost:5173`
 
 ---
 
-## 🔌 Connecting to a Backend REST API
+## 🧭 Application Pages
 
-The frontend is fully wired to REST API endpoints via `src/services/api.ts`:
-- `GET /api/services/search`: Search with natural language query & filters
-- `GET /api/providers/:id`: Get single provider details
-- `GET /api/providers/featured`: Get top-rated providers
-- `POST /api/auth/otp/send`: Request OTP
-- `POST /api/auth/otp/verify`: Verify OTP & authenticate
-- `GET /api/user/profile`: Get citizen profile, favorites & history
-- `PUT /api/user/profile`: Update citizen profile
-- `POST /api/user/favorites/toggle`: Toggle saved provider
-- `DELETE /api/user/history`: Clear search history
-- `POST /api/bookings`: Create booking request
-- `POST /api/providers/:id/reviews`: Post verified review
-- `PUT /api/provider/profile`: Update business profile
-- `PUT /api/provider/availability`: Toggle online/offline status
-- `POST /api/provider/services`: Add new service
-- `DELETE /api/provider/services/:id`: Delete service
+1. **Landing Page (`/`)**: Public interface explaining the 4-pillar disaster management pipeline, showing live telemetry preview, impact statistics, and official emergency helplines (NDRF `1078`, SDRF `1070`, National Emergency `112`).
+2. **Main Dashboard (`/dashboard`)**: Unified control room featuring 6 real-time KPI cards, 30-minute hydrograph forecast with 95% confidence band, risk diagnostics, sensor graphs, Dijkstra evacuation panel, disaster map, and alert feed.
+3. **Live Flood Monitoring Map (`/map`)**: Full-screen interactive Leaflet map with CartoDB Voyager tiles, 5 sensor stations, 3 river stream lines, 4 risk zone polygons, 4 high-ground shelters, browser geolocation, layer toggle checkboxes, slide-out node inspection drawer, and animated evacuation convoy simulator.
+4. **AI Prediction Intelligence (`/prediction` or `/analytics`)**: Detailed hydrograph with shaded 95% Monte Carlo uncertainty band, 3 multi-sensor trend charts, and mathematical documentation of the Kalman filter, Kinematic wave runoff, and Monte Carlo engines.
+5. **Dijkstra Evacuation Routing (`/evacuation`)**: Dynamic pathfinding summary (distance, transit time, elevation gain), topographic elevation profile chart, turn-by-turn guidance steps with hazard indicators, safe shelters inventory table, emergency contacts directory, and printable offline action card.
+6. **Automated Emergency Alerts (`/alerts`)**: Live emergency alerts feed with severity filtering, operator acknowledgment, multi-channel broadcast simulator (Cell Broadcast/SMS, WhatsApp emergency bot, CAP v1.2 XML protocol, Police VHF radio), and manual siren test player.
+7. **Settings & Simulation Studio (`/settings`)**: Interactive simulation control studio (Normal, Monsoon Downpour, Extreme Cloudburst), polling frequency selector (1s, 2s, 5s), basin selector, IoT gauge hardware diagnostics (battery %, solar power, LoRaWAN RSSI), and threshold customization form.
+8. **Operator Login (`/login`)**: Operator and Commander authentication portal with one-click quick-fill credentials.
 
-> **Note**: When the backend server is offline or unreachable, the frontend automatically falls back to its built-in client AI intent and mock data engine with `localStorage` persistence, ensuring zero broken pages during demonstrations.
-#   L o c a l L i n k - A i  
- #   L o c a l L i n k - A i  
- #   L o c a l L i n k - A i -  
- #   L o c a l L i n k - A i -  
+---
+
+## 🔬 Core Algorithms & Formulations
+
+### 1. 1D Discrete Kalman Filter State-Space Sensor Fusion
+- **State Vector**: $\mathbf{x}_k = [h_k, v_k]^T$, tracking water stage height ($m$) and velocity rate of rise ($m/min$).
+- **State Transition**: $\mathbf{F} = \begin{bmatrix} 1 & \Delta t \\ 0 & 1 \end{bmatrix}$ with $\Delta t = \frac{2}{60}\text{ min}$.
+- **Innovation**: $\mathbf{y}_k = z_k - \mathbf{H} \mathbf{x}_{k|k-1}$ with $\mathbf{H} = [1, 0]$.
+- **Measurement Noise Covariance**: $R = 0.04\text{ m}^2$.
+- **Packet Drop Coasting**: Kinematically extrapolates state when telemetry packets drop without crashing the prediction loop.
+
+### 2. Kinematic Wave Rainfall-Runoff Model
+- **Non-linear Soil Runoff Coefficient ($C$)**:
+  $$C(S_{moist}) = C_{base} + \frac{C_{sat} - C_{base}}{1 + \exp\left(-12 \cdot (S_{moist}/100 - 0.70)\right)}$$
+- **Basin Concentration Lag**: $\tau_{lag} \approx 22\text{ minutes}$.
+- **Stage Discharge Routing**: Outflow rate follows hydraulic power law $Q_{out}(h) = \kappa \cdot h^{1.5}$.
+
+### 3. 1,000-Scenario Monte Carlo Stochastic Risk Simulation
+- Stochastic perturbations on rainfall intensity $\mathcal{N}(1.0, 0.22^2)$, soil moisture $\mathcal{N}(0, 4.0^2)$, and channel roughness $\mathcal{N}(1.0, 0.10^2)$.
+- **Empirical Breach Probability**:
+  $$P_{flood} = \frac{\sum_{i=1}^{1000} \mathbb{I}\left(\max_{t \in [1, 30]} h_i(t) \ge 3.50\text{ m}\right)}{1000} \times 100\%$$
+- Computes minute-by-minute percentiles ($p_{10}$ to $p_{95}$) and 95% Confidence Interval.
+
+### 4. Stateful Hysteresis Risk Classification
+- Four tiers: `LOW` ($0-20\%$), `MODERATE` ($20-40\%$), `HIGH` ($40-70\%$), `CRITICAL` ($70-100\%$).
+- **Instant Escalation**: Any metric crossing the upper threshold immediately triggers higher alarm levels.
+- **Buffered De-escalation**: Requires water level to fall by $\ge 0.20\text{m}$ and probability by $\ge 5.0\%$ across consecutive cycles to eliminate rapid alarm oscillation.
+
+### 5. NetworkX Dijkstra Evacuation Routing with Inundation Avoidance
+- Valley road network modeled as a topological weighted graph $G = (V, E)$.
+- When river stage crosses critical danger thresholds ($h \ge 3.50\text{m}$), river gorge causeway edges are penalized with infinite weight ($10^6$) and marked impassable.
+- Dijkstra algorithm computes the shortest safe uphill escape path to **Pine Ridge High Ground Shelter (Elevation: 1,420 m)** via the **Sector 4 Ridge Pass**.
+
+---
+
+## 🔐 Operator Credentials
+
+| Role | Username | Password | Access Level |
+|---|---|---|---|
+| **Field Operator** | `operator` | `Flood@2026` | Live Telemetry & Alert Acknowledgment |
+| **Disaster Commander** | `admin` | `Admin@123` | Full Incident Command Center Access |
+| **SIH 2026 Grand Jury** | `sih_judge` | `Judge@2026` | Evaluator Mode |
+
+---
+
+## 📢 Simulation Data Transparency
+All simulated sensor telemetry generated by the system includes explicit metadata:
+- `"is_simulated": true`
+- `"data_source": "SIMULATED"`
+
+No synthetic data is represented as genuine physical gauge readings.#   n e w f l o o d p r o j e c t  
  

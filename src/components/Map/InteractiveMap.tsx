@@ -54,14 +54,27 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
       // Add Zoom Control to top right
       L.control.zoom({ position: 'topright' }).addTo(map);
 
-      // CartoDB Dark Matter Tiles (Modern AI Dark theme)
+      // Map Tile Engine configuration: CartoDB / OSM / Mapbox / Google Maps
       const tileProvider = import.meta.env.VITE_MAP_PROVIDER || 'osm';
-      const tileUrl = tileProvider === 'osm_light'
-        ? 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
-        : 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
+      const mapboxToken = import.meta.env.VITE_MAPBOX_TOKEN;
+      const googleMapsApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+
+      let tileUrl = 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
+      let attribution = '&copy; <a href="https://carto.com/">CARTO</a> &copy; <a href="https://openstreetmap.org">OSM</a>';
+
+      if (tileProvider === 'mapbox' && mapboxToken) {
+        tileUrl = `https://api.mapbox.com/styles/v1/mapbox/dark-v11/tiles/{z}/{x}/{y}?access_token=${mapboxToken}`;
+        attribution = '&copy; <a href="https://www.mapbox.com/">Mapbox</a> &copy; <a href="https://openstreetmap.org">OSM</a>';
+      } else if (tileProvider === 'google' && googleMapsApiKey) {
+        tileUrl = `https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}&key=${googleMapsApiKey}`;
+        attribution = '&copy; <a href="https://maps.google.com">Google Maps</a>';
+      } else if (tileProvider === 'osm_light') {
+        tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+        attribution = '&copy; <a href="https://openstreetmap.org">OpenStreetMap</a>';
+      }
 
       L.tileLayer(tileUrl, {
-        attribution: '&copy; <a href="https://carto.com/">CARTO</a> &copy; <a href="https://openstreetmap.org">OSM</a>',
+        attribution,
         maxZoom: 19,
         subdomains: 'abcd',
       }).addTo(map);

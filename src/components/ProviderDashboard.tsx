@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Store, 
   ShieldCheck, 
@@ -23,6 +23,9 @@ import {
   Calendar,
   Save,
   LogIn,
+  LogOut,
+  KeyRound,
+  Building2,
   AlertCircle,
   FileCheck,
   Zap,
@@ -34,8 +37,29 @@ import { INITIAL_PROVIDERS } from '../data/mockData';
 import { Provider, ServiceItem } from '../types';
 
 export const ProviderDashboard: React.FC = () => {
-  // Active demo provider
-  const [provider, setProvider] = useState<Provider>(INITIAL_PROVIDERS[1]); // Sharma Rapid Plumbing
+  // Provider Login state
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(() => {
+    return !!localStorage.getItem('locallink_current_provider_id') || !!localStorage.getItem('locallink_provider_token');
+  });
+
+  // Active provider
+  const [provider, setProvider] = useState<Provider>(() => {
+    const storedId = localStorage.getItem('locallink_current_provider_id');
+    if (storedId) {
+      const found = INITIAL_PROVIDERS.find((p) => p.id === storedId);
+      if (found) return found;
+    }
+    return INITIAL_PROVIDERS[1]; // default: Sharma Rapid Plumbing
+  });
+
+  // Provider Login Form State
+  const [loginPhone, setLoginPhone] = useState('');
+  const [loginOtp, setLoginOtp] = useState('');
+  const [loginStep, setLoginStep] = useState<'credentials' | 'otp'>('credentials');
+  const [loginLoading, setLoginLoading] = useState(false);
+  const [loginError, setLoginError] = useState<string | null>(null);
+  const [demoLoginOtp, setDemoLoginOtp] = useState<string | null>(null);
+
   const [isAvailable, setIsAvailable] = useState<boolean>(provider.isAvailableNow);
   const [urgencySupported, setUrgencySupported] = useState<boolean>(provider.urgencySupported);
 
@@ -113,6 +137,100 @@ export const ProviderDashboard: React.FC = () => {
   const showSaveNotice = (msg: string) => {
     setSaveSuccessMsg(msg);
     setTimeout(() => setSaveSuccessMsg(null), 3000);
+  };
+
+  useEffect(() => {
+    setIsAvailable(provider.isAvailableNow);
+    setUrgencySupported(provider.urgencySupported);
+    setProfileForm({
+      name: provider.name,
+      categoryLabel: provider.categoryLabel,
+      description: provider.description,
+      fullDescription: provider.fullDescription || '',
+      address: provider.address,
+      area: provider.area,
+      phoneNumber: provider.phoneNumber,
+      email: provider.email || '',
+      website: provider.website || '',
+    });
+    setServices(provider.services);
+    setWeeklyHours(provider.weeklyHours || {
+      'Monday': '24 Hours Open',
+      'Tuesday': '24 Hours Open',
+      'Wednesday': '24 Hours Open',
+      'Thursday': '24 Hours Open',
+      'Friday': '24 Hours Open',
+      'Saturday': '24 Hours Open',
+      'Sunday': '24 Hours Open'
+    });
+  }, [provider]);
+
+  // Provider Login Actions
+  const handleRequestProviderOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!loginPhone || loginPhone.replace(/\D/g, '').length < 10) {
+      setLoginError('Please enter a valid 10-digit registered mobile number');
+      return;
+    }
+    setLoginLoading(true);
+    setLoginError(null);
+    try {
+      const res = await api.requestOtp(loginPhone);
+      setDemoLoginOtp(res.demoOtp);
+      setLoginStep('otp');
+    } catch (err: any) {
+      setLoginError(err.message || 'Failed to send OTP to registered merchant number');
+    } finally {
+      setLoginLoading(false);
+    }
+  };
+
+  const handleVerifyProviderOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!loginOtp || loginOtp.length < 6) {
+      setLoginError('Please enter 6-digit OTP code');
+      return;
+    }
+    setLoginLoading(true);
+    setLoginError(null);
+    try {
+      const res = await api.providerLogin({ phoneOrEmail: loginPhone, otpOrPin: loginOtp });
+      setProvider(res.provider);
+      setIsLoggedIn(true);
+      setLoginStep('credentials');
+      setLoginOtp('');
+      confetti({ particleCount: 50, spread: 60 });
+    } catch (err: any) {
+      setLoginError(err.message || 'Merchant verification failed');
+    } finally {
+      setLoginLoading(false);
+    }
+  };
+
+  const handleQuickDemoLogin = async (demoProv: Provider) => {
+    setLoginLoading(true);
+    setLoginError(null);
+    try {
+      const res = await api.providerLogin({
+        phoneOrEmail: demoProv.phoneNumber,
+        otpOrPin: '123456',
+        providerId: demoProv.id
+      });
+      setProvider(res.provider);
+      setIsLoggedIn(true);
+      confetti({ particleCount: 60, spread: 70 });
+    } finally {
+      setLoginLoading(false);
+    }
+  };
+
+  const handleProviderLogout = () => {
+    localStorage.removeItem('locallink_provider_token');
+    localStorage.removeItem('locallink_current_provider_id');
+    setIsLoggedIn(false);
+    setLoginStep('credentials');
+    setLoginPhone('');
+    setLoginOtp('');
   };
 
   // Toggle Availability

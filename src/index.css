@@ -1,6 +1,17 @@
 @import "tailwindcss";
 @import "leaflet/dist/leaflet.css";
 
+:root {
+  --bg-navy: #07111F;
+  --panel-blue: #101D2E;
+  --accent-cyan: #00D4FF;
+  --emergency-orange: #FF9F43;
+  --critical-red: #FF3B45;
+  --safe-green: #20D69A;
+  --text-muted: #94A3B8;
+  --border-panel: #1E2D42;
+}
+
 @layer base {
   * {
     box-sizing: border-box;
@@ -9,9 +20,9 @@
   body {
     margin: 0;
     padding: 0;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    background-color: #0f172a;
-    color: #f8fafc;
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background-color: #07111F;
+    color: #F8FAFC;
     min-height: 100vh;
     overflow-x: hidden;
   }
@@ -19,51 +30,115 @@
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #0f172a;
+  background: #07111F;
 }
 ::-webkit-scrollbar-thumb {
-  background: #334155;
-  border-radius: 4px;
+  background: #1E2D42;
+  border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #475569;
+  background: #00D4FF44;
 }
 
-/* Pulse radar animation */
+/* Glassmorphism Panels */
+.glass-panel {
+  background: rgba(16, 29, 46, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(30, 45, 66, 0.9);
+}
+
+.glass-panel-hover {
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.glass-panel-hover:hover {
+  background: rgba(19, 36, 58, 0.95);
+  border-color: rgba(0, 212, 255, 0.35);
+  box-shadow: 0 10px 25px -5px rgba(0, 212, 255, 0.08);
+}
+
+.glass-card {
+  background: rgba(16, 29, 46, 0.7);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(30, 45, 66, 0.7);
+}
+
+/* Glowing utilities */
+.glow-cyan {
+  box-shadow: 0 0 20px -3px rgba(0, 212, 255, 0.35);
+}
+.glow-critical {
+  box-shadow: 0 0 20px -3px rgba(255, 59, 69, 0.45);
+}
+.glow-warning {
+  box-shadow: 0 0 20px -3px rgba(255, 159, 67, 0.4);
+}
+.glow-safe {
+  box-shadow: 0 0 20px -3px rgba(32, 214, 154, 0.35);
+}
+
+/* Pulse animations */
 @keyframes radar-pulse {
   0% {
     transform: scale(0.8);
-    opacity: 0.8;
+    opacity: 0.9;
   }
   100% {
-    transform: scale(2.2);
+    transform: scale(2.4);
     opacity: 0;
   }
 }
 
 .animate-radar {
-  animation: radar-pulse 2s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+  animation: radar-pulse 2.2s cubic-bezier(0, 0.2, 0.8, 1) infinite;
 }
 
 @keyframes ping-slow {
-  0% {
+  0%, 100% {
     transform: scale(1);
     opacity: 0.9;
   }
   50% {
-    transform: scale(1.4);
-    opacity: 0.2;
-  }
-  100% {
-    transform: scale(1);
-    opacity: 0.9;
+    transform: scale(1.3);
+    opacity: 0.3;
   }
 }
 
 .animate-ping-slow {
-  animation: ping-slow 3s ease-in-out infinite;
+  animation: ping-slow 2.8s ease-in-out infinite;
+}
+
+/* River Water Flow Waves */
+@keyframes wave-flow {
+  0% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: -100;
+  }
+}
+
+.animate-wave-flow {
+  stroke-dasharray: 8 4;
+  animation: wave-flow 4s linear infinite;
+}
+
+/* Map custom styles */
+.leaflet-container {
+  background-color: #07111F !important;
+  font-family: inherit !important;
+}
+.leaflet-popup-content-wrapper {
+  background: #101D2E !important;
+  color: #F8FAFC !important;
+  border: 1px solid #1E2D42 !important;
+  border-radius: 14px !important;
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.7) !important;
+}
+.leaflet-popup-tip {
+  background: #101D2E !important;
 }

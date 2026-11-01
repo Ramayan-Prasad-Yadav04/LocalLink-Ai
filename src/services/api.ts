@@ -596,4 +596,46 @@ export const api = {
       }
     }
   },
+
+  // 16. Provider Dashboard: Provider Login with OTP or Merchant credentials
+  async providerLogin(credentials: { phoneOrEmail: string; otpOrPin: string; providerId?: string }): Promise<{ provider: Provider; token: string }> {
+    try {
+      const response = await apiClient.post('/provider/login', credentials);
+      if (response.data.token) {
+        localStorage.setItem('locallink_provider_token', response.data.token);
+      }
+      if (response.data.provider) {
+        localStorage.setItem('locallink_current_provider_id', response.data.provider.id);
+      }
+      return response.data;
+    } catch {
+      await new Promise((res) => setTimeout(res, 400));
+      const providers = getStoredProviders();
+      let matched = providers[0];
+      if (credentials.providerId) {
+        const found = providers.find((p) => p.id === credentials.providerId);
+        if (found) matched = found;
+      } else if (credentials.phoneOrEmail) {
+        const clean = credentials.phoneOrEmail.replace(/\D/g, '');
+        const found = providers.find(
+          (p) => p.phoneNumber.replace(/\D/g, '').includes(clean) || (p.email && p.email.toLowerCase() === credentials.phoneOrEmail.toLowerCase())
+        );
+        if (found) matched = found;
+      }
+      const token = 'prov-token-' + Math.random().toString(36).substring(2);
+      localStorage.setItem('locallink_provider_token', token);
+      localStorage.setItem('locallink_current_provider_id', matched.id);
+      return { provider: matched, token };
+    }
+  },
+
+  // 17. Get All Providers
+  async getAllProviders(): Promise<Provider[]> {
+    try {
+      const response = await apiClient.get('/providers');
+      return response.data;
+    } catch {
+      return getStoredProviders();
+    }
+  },
 };
